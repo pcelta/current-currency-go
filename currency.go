@@ -10,7 +10,6 @@ type Message struct {
 	Date string
 	Rates struct {
 		Brl float32 `json:"BRL"`
-		Cad float32 `json:"CAD"`
 	}
 }
 
@@ -19,8 +18,7 @@ func main() {
 	base := flag.String("base", "USD", "Currency Symbol")	
 	flag.Parse()
 
-	fmt.Println("Recovering current situation...")
-	response, error := http.Get("http://api.fixer.io/latest?base="+*base)
+	response, error := http.Get("http://api.fixer.io/latest?symbols=BRL&base="+*base)
 	defer response.Body.Close()
 	if error != nil {
 		fmt.Println(error)
@@ -31,12 +29,11 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 		} else {
-			output(message)
+			output(*base, message)
 		}
 	}
 }
 
-func output(message *Message) {
-	fmt.Printf("Dolar Canadense: %f\n", message.Rates.Cad);
-	fmt.Printf("Real: %f", message.Rates.Brl);
+func output(base string, message *Message) {
+	fmt.Printf("1 %s is equivalent to R$%f\n", base, message.Rates.Brl)
 }
